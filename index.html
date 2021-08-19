@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>斗地主</title>
+  <!-- 样式文件 -->
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<div class="main">
+  <div class="computer">
+    <div class="player2">
+      <ul></ul>
+    </div>
+    <div class="game">
+      <div class="header">
+        <div>当前出牌玩家</div>
+        <span class="title"></span>
+        <div class="host_card">
+          <ul></ul>
+        </div>
+      </div>
+      <div class="tips">还没轮到你</div>
+      <div class="discard">
+        <div class="discard1">
+          <ul></ul>
+        </div>
+        <div class="discard2">
+          <ul></ul>
+        </div>
+        <div class="discard3">
+          <ul></ul>
+        </div>
+      </div>
+      <div class="player1-button">
+        <button class="pass">不出</button>
+        <button class="play">出牌</button>
+      </div>
+      <div class="message_box">
+        <div class="score">
+          <div class="player1_score">
+            得分：<span class="score">0</span><br />
+            身份：<span class="identity">&ensp;</span><br />
+            剩余：<span class="card_number"></span>
+          </div>
+          <div class="player2_score">
+            得分：<span class="score">0</span><br />
+            身份：<span class="identity">&ensp;</span><br />
+            剩余：<span class="card_number"></span>
+          </div>
+          <div class="player3_score">
+            得分：<span class="score">0</span><br />
+            身份：<span class="identity">&ensp;</span><br />
+            剩余：<span class="card_number"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="player3">
+      <ul></ul>
+    </div>
+  </div>
+  <div class="person">
+    <div class="player1">
+      <ul></ul>
+    </div>
+  </div>
+  <div class="mask">
+    <button id="start_btn">开始游戏</button>
+  </div>
+  <div class="multiple_message">
+    <div class="bottom_score">底分：<span class="score">6</span></div>
+    <div class="multiple">倍数：<span class="score">1</span></div>
+  </div>
+</div>
+</body>
+<!-- 脚本文件 -->
+<script src="./js/Card.js"></script>
+<script src="./js/PlayerRule.js"></script>
+<script src="./js/Player.js"></script>
+<script src="./js/CardTable.js"></script>
+<script src="./Game.js"></script>
+</html>

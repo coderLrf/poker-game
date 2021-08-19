@@ -1,0 +1,307 @@
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+ul li {
+  list-style: none;
+}
+
+.main {
+  min-width: 960px;
+  padding: 5px;
+  background: rgb(67, 142, 219);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.computer {
+  flex: 3;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.person {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.computer > .game {
+  flex: 2.5;
+}
+
+.computer > .game .host_card {
+  margin-top: 20px;
+}
+
+.computer > .game .host_card ul {
+  display: flex;
+}
+
+.computer > .game .host_card li {
+  width: 75px;
+  height: 95px;
+  border: 1px solid #ccc;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  margin: 0 2px;
+}
+
+.player2, .player3 {
+  margin: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.player1 {
+  height: 95px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.player1 ul {
+  display: flex;
+  height: 100%;
+}
+
+.player1 ul li {
+  width: 34px;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  color: transparent;
+}
+
+.player1 ul li:nth-last-child(1) {
+  width: 75px;
+  position: relative;
+  background-size: 100% 100%;
+}
+
+.player1 ul li:hover {
+  border: 1px solid #53b369;
+  cursor: pointer;
+}
+
+.player1 ul li.active {
+  margin-top: -15px;
+  background-color: #9ab89a;
+}
+
+.player2 ul li, .player3 ul li {
+  width: 75px;
+  text-align: center;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  color: transparent;
+  position: relative;
+}
+
+.player2 ul li:nth-last-child(1), .player3 ul li:nth-last-child(1) {
+  height: 95px;
+  position: relative;
+  background-size: 100% 100%;
+}
+
+.player2 ul li > div, .player3 ul li > div {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  z-index: -100;
+}
+
+.player2 ul li:nth-last-child(1) > div, .player3 ul li:nth-last-child(1) > div {
+  height: 95px;
+  background-size: 100% 100%;
+}
+
+.game {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.tips {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  opacity: 0;
+}
+
+.tips.show {
+  opacity: 1;
+}
+
+.game .player1-button {
+  /*display: none;*/
+  z-index: 10;
+}
+
+button {
+  margin: 0 24px;
+  padding: 6px 12px;
+  outline: none;
+  border: 0;
+  border-radius: 6px;
+  background-color: #9ab89a;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #53b369;
+}
+
+.game .discard {
+  width: 100%;
+  flex: 1;
+  position: relative;
+}
+
+.game .discard > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game .discard .discard1 {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 95px;
+}
+
+.game .discard .discard2 {
+  float: right;
+  width: 75px;
+  height: 100%;
+}
+
+.game .discard .discard3 {
+  float: left;
+  width: 75px;
+  height: 100%;
+}
+
+.game .discard .discard1 ul {
+  display: flex;
+}
+
+.game .discard .discard1 li {
+  text-align: left;
+  width: 34px;
+  height: 95px;
+  border: 1px solid #ccc;
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  color: transparent;
+}
+
+.game .discard .discard1 li:nth-last-child(1) {
+  width: 75px;
+  background-size: 100% 100%;
+}
+
+.game .discard .discard2 li, .game .discard .discard3 li {
+  width: 75px;
+  border: 1px solid #ccc;
+  text-align: left;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  color: transparent;
+}
+
+.game .discard .discard2 li:nth-last-child(1), .game .discard .discard3 li:nth-last-child(1) {
+  height: 95px;
+  background-size: 100% 100%;
+}
+
+/* 遮罩层 */
+.mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.mask.start {
+  display: none;
+}
+
+/* 基本信息 */
+.message_box {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 5;
+}
+
+.message_box .score {
+  width: 100%;
+  height: 100%;
+}
+
+.score > div {
+  position: absolute;
+  text-align: left;
+}
+
+.score .player1_score {
+  bottom: 0;
+  left: 80px;
+}
+
+.score .player2_score {
+  right: 10px;
+  top: 50px;
+}
+
+.score .player3_score {
+  left: 10px;
+  top: 50px;
+}
+
+/* 倍数 */
+.multiple_message {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+}
+
+.multiple_message > div {
+  margin: 0 6px;
+}
+
+
