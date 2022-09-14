@@ -14,7 +14,12 @@ function CardTable() {
   this.playerRule = new PlayRule() // 游戏规则
   this.startState = false // 游戏开始的状态，默认还没有开始
 
-  this.shuffleCards = false // 表示是否需要进行洗牌，不洗牌模式
+  this.landPress = false // 地主玩家是否被压制
+
+  /**
+   * TODO 洗牌模式
+   */
+  this.shuffleCards = true // 表示是否需要进行洗牌，不洗牌模式
 
   // 用来存放玩家的数组
   this.playerList = []
@@ -46,7 +51,6 @@ function CardTable() {
   this.init = function () {
     // 清空牌堆
     this.clearDiscard()
-
     // 做牌，洗牌
     this.makeCard()
     // 创建3名玩家，清空玩家数组
@@ -58,7 +62,8 @@ function CardTable() {
     // 创建幸运玩家
     this.luck = parseInt((Math.random() * 3) + '') // 幸运数字
     // this.luck = 0
-    this.currentIndex = this.luck// 当前玩家索引
+    this.currentIndex = this.luck // 当前玩家索引
+    this.playerList[this.currentIndex].setFlag() // 设置flag
     // 选出地主
     for (let i = 0; i < this.playerList.length; i++) {
       let identity = '农民'
@@ -79,7 +84,7 @@ function CardTable() {
     this.startState = true // 游戏开始
     // 判断如果地主不是player1，自动出牌
     if(this.currentIndex !== 0) {
-      this.playerList[this.currentIndex].plays()
+      this.playerList[this.currentIndex].plays() // 出牌
     }
   }
 
@@ -274,19 +279,18 @@ function CardTable() {
    */
   this.nextPlayer = function() {
     // 如果存在游戏赢家
-    if(this.GAME_WIN) {
-      return
+    if(this.GAME_WIN) return
+    this.playerList[this.currentIndex ++].flag = false // 新的一个回合
+    if(this.currentIndex >= this.playerList.length) { // 轮训
+      this.currentIndex = 0
     }
+    this.playerList[this.currentIndex].setFlag() // 设置flag
     setTimeout(() => {
-      this.playerList[this.currentIndex].flag = false // 新的一个回合
-      this.currentIndex++
-      if(this.currentIndex >= this.playerList.length) {
-        this.currentIndex = 0
-      }
       this.titleEl.innerHTML = this.playerList[this.currentIndex].name
       // 如果上一次出牌玩家还是自身，等价于另外两名玩家已经被压制了，可以出头牌
       if(this.lastPlayer === this.playerList[this.currentIndex]) {
         this.playerList[this.currentIndex].root = true
+        this.landPress = false // 新回合，地主没有被压制
       }
       // 如果不是玩家1，自动出牌
       if(this.currentIndex !== 0) {
@@ -303,13 +307,8 @@ function CardTable() {
     this.discardElList[this.currentIndex].innerHTML = ''
     // 根据出牌类型
     let index = selectBox.length - 1
-    switch(this.TYPE) {
-      case 'four':
-        if(this.isBomb()) {// 如果是大小王炸弹
-          index = 1
-        }
-        break
-      default:
+    if (this.TYPE === 'four' && this.isBomb()) { // 如果是大小王炸弹
+      index = 1
     }
     this.typeCount = index
     this.LAST_PLAY = selectBox

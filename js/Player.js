@@ -9,11 +9,17 @@ function Player(name, cardTable = null) {
   this.box = [] // 用来存放玩家的手牌
   this.selectBox = [] // 用来存放玩家选择的手牌
   this.waitBox = [] // 等下要出的牌
-  this.hand = true // 该玩家是否被压制，默认是否压制，被压制的玩家不能出牌
   this.root = false // 出头牌判断
   this.type = '' // 出牌的类型
   this.flag = false // 是否已经出牌，用来限制一回合只能出一次牌
 
+  // 设置玩家元素
+  const el = document.querySelector(`.${this.name}_score .player`)
+  if (el) {
+    el.innerHTML = name
+  }
+  // 标签元素
+  this.flagEl = el
   // 分数元素
   this.scoreEl = document.querySelector(`.${this.name}_score .score`)
   // 身份元素
@@ -28,7 +34,7 @@ function Player(name, cardTable = null) {
   // 设置类型
   this.setType = function (type) {
     // 在这里进行了一些限制
-    if (type === 'one' || type === 'two' || type === 'three' || type === 'four' || type === 'line') {
+    if (['one', 'two', 'three', 'four', 'line'].includes(type)) {
       this.type = type
     } else {
       console.log('类型不符合规则')
@@ -144,13 +150,15 @@ function Player(name, cardTable = null) {
       this.cardTable.showTips('您有出头牌的能力，不可以不要哟~~')
       return
     }
-    this.hand = true // 玩家被压制
     if (this.selectBox.length) {
       this.selectBox = []
       this.refreshCard() // 刷新
     }
-    this.cardTable.showTips(this.name + '不要~~')
+    this.cardTable.showTips(this.name + ' 不要~~')
     this.flag = true // 表示已经过了
+    if (this.isLand()) { // 如果是地主
+      this.cardTable.landPress = true // 表示已经被压制
+    }
     this.cardTable.nextPlayer()
   }
 
@@ -174,8 +182,12 @@ function Player(name, cardTable = null) {
     // 判断是否可以出头牌
     if (this.root) {
       this.hostPlayer() // 出头牌
-      this.root = false
       return
+    } else {
+      // 判断是否地主被压制，并且自己不是地主
+      if (!this.isLand() && this.cardTable.landPress) {
+        return this.passPlays() // pass
+      }
     }
     // 定义一个标记用来标记是否有牌可以出
     let flag = false
@@ -248,6 +260,7 @@ function Player(name, cardTable = null) {
       // 判断是否满足出牌规则
       if (this.cardTable.playerRule.rule(this.selectBox, this)) {
         this.playCards()
+        this.root = false
       } else {
         this.cardTable.showTips('你选择的牌不符合规则，请重新选择')
       }
@@ -256,6 +269,7 @@ function Player(name, cardTable = null) {
       const type = this.getTopCardType()
       this.setType(type)
       this.playCards()
+      this.root = false
     }
   }
 
@@ -294,14 +308,11 @@ function Player(name, cardTable = null) {
     if (flag) {
       // 选出指定的牌card
       const cards = this.selectBox.map(select => select.card).sort((a, b) => a.size - b.size)
-      for (let i = 0; i < cards.length; i++) {
-        // 添加到弃牌堆
-        this.cardTable.DISCARD_PILE.push(cards[i])
-      }
+      // 添加到弃牌堆
+      this.cardTable.DISCARD_PILE.push(...cards)
       // 成功出牌
       this.successPlays(cards)
     } else {
-      this.hand = true // 玩家被压制
       return
     }
     // 清空selectBox
@@ -318,16 +329,12 @@ function Player(name, cardTable = null) {
       // 如果是出头牌，直接从小出到大
       outArr = []
       if(this.waitBox.length) {
-        for (let i = 0; i < this.waitBox.length; i++) {
-          this.cardTable.DISCARD_PILE.push(this.waitBox[i])
-        }
-        outArr = this.waitBox
+        outArr = [...this.waitBox]
         this.waitBox = [] // 清空
       } else {
         // 获取出牌数量
         const count = this.getCountByType(this.type)
         for (let i = this.box.length - 1; i >= this.box.length - count; i--) {
-          this.cardTable.DISCARD_PILE.push(this.box[i]) // 添加到弃牌堆
           outArr.push(this.box[i]) // 添加到牌堆
         }
       }
@@ -338,9 +345,6 @@ function Player(name, cardTable = null) {
       // 电脑玩家，过滤掉小牌是对子或则三条的情况下
       const rootCard = this.cardTable.getRootCard()
       if (this.waitBox.length) {
-        for (let i = 0; i < this.waitBox.length; i++) {
-          this.cardTable.DISCARD_PILE.push(this.waitBox[i])
-        }
         outArr = this.waitBox
         flag = true // 成功出牌
         this.setType('line') // 重置出牌类型
@@ -353,9 +357,9 @@ function Player(name, cardTable = null) {
               u = i
             }
             // 新增规则：如果要出牌是个对子、三条、炸弹、顺子，则可以不出
-            if(this.cardTable.TYPE === 'one') {
-              let index = this.cardTable.playerRule.canToContact(this, i)
-              if(index) {
+            if(['one', 'two' ,'three'].includes(this.cardTable.TYPE)) {
+              let index = this.cardTable.playerRule.canToContact(this, i, this.cardTable.TYPE)
+              if(index && index > 0) {
                 i = parseInt(index) + 1 // 这里 + 1是为了抵消for循环 - 1
                 continue
               }
@@ -363,7 +367,6 @@ function Player(name, cardTable = null) {
             if (this.box[i].number === this.box[i - this.cardTable.typeCount].number) {
               // 出牌
               for (let j = i; j >= i - this.cardTable.typeCount; j--) {
-                this.cardTable.DISCARD_PILE.push(this.box[j]) // 添加到弃牌堆
                 outArr.push(this.box[j]) // 添加到牌堆
               }
               flag = true // 成功出牌
@@ -380,7 +383,6 @@ function Player(name, cardTable = null) {
           if (this.box[i].number === this.box[i - this.cardTable.typeCount].number) {
             // 出牌
             for (let j = i; j >= i - this.cardTable.typeCount; j--) {
-              this.cardTable.DISCARD_PILE.push(this.box[j]) // 添加到弃牌堆
               outArr.push(this.box[j]) // 添加到牌堆
             }
             flag = true // 成功出牌
@@ -389,9 +391,8 @@ function Player(name, cardTable = null) {
         }
       }
     }
-
-    // 如果没有成功出牌，这里查找是否有炸弹
-    if (!flag) {
+    // 如果没有成功出牌，这里查找是否有炸弹，并且上一次出牌玩家不是队友
+    if (!flag && this.identity !== this.cardTable.lastPlayer.identity) {
       outArr = []
       let bombFlag = false
       if (this.isBomb()) {
@@ -400,7 +401,6 @@ function Player(name, cardTable = null) {
             if (this.isFour(i)) {
               // 出牌
               for (let j = i; j >= i - 3; j--) {
-                this.cardTable.DISCARD_PILE.push(this.box[j]) // 添加到弃牌堆
                 outArr.push(this.box[j]) // 添加到牌堆
               }
               bombFlag = true // 成功出炸弹
@@ -411,7 +411,6 @@ function Player(name, cardTable = null) {
         }
         // 如果拥有大小王
         if (this.box[0].number === '大王' && this.box[1].number === '小王' && !bombFlag) {
-          this.cardTable.DISCARD_PILE.push(this.box[0], this.box[1])
           outArr.push(this.box[0], this.box[1]) // 添加到牌堆
           bombFlag = true // 成功出炸弹
           this.setType('four')
@@ -435,15 +434,20 @@ function Player(name, cardTable = null) {
 
   // 成功出牌
   this.successPlays = function (outArr) {
+    this.cardTable.DISCARD_PILE.push(...outArr) // 添加到弃牌堆
     if (this.type === 'four') {
-      this.cardTable.showTips('炸弹来了~~') // 你没有牌可以大过大家
+      this.cardTable.showTips(`${this.name} 炸弹来了~~`) // 你没有牌可以大过大家
+    } else {
+      this.cardTable.showTips(`${this.name} ${this.type}`)
     }
     this.cardTable.setType(this.type)
     this.removeSelf(outArr) // 删除自身
     this.cardTable.discardRender(outArr) // 渲染牌堆
     this.refreshCard() // 刷新手上的牌
-    this.hand = false // 玩家没有被压制
     this.flag = true // 已经出牌
+    if (this.isLand()) {
+      this.cardTable.landPress = false // 地主玩家没有被压制
+    }
     this.cardTable.lastPlayer = this // 上一次出牌的玩家
     this.isWin()
   }
@@ -711,6 +715,23 @@ function Player(name, cardTable = null) {
       const parentNode = cardsEl[i].parentNode
       parentNode.removeChild(cardsEl[i])
     }
+  }
+
+  /**
+   * 判断身份是否是地主
+   */
+  this.isLand = function() {
+    return this.identity === '地主'
+  }
+
+  // 刷新flag
+  this.setFlag = function() {
+    for (let player of this.cardTable.playerList) {
+      player.flagEl.style.color = ''
+      player.flagEl.style.fontWeight = ''
+    }
+    this.flagEl.style.color = 'red'
+    this.flagEl.style.fontWeight = 'bold'
   }
 }
 // console.log(new Player('张三', '农民'))

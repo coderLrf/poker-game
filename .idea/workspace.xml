@@ -16,7 +16,13 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b00480ea-0d87-4a2b-92c6-9a22abc06af5" name="Default Changelist" comment="修复了一些bug -- 版本2.0" />
+    <list default="true" id="b00480ea-0d87-4a2b-92c6-9a22abc06af5" name="Default Changelist" comment="修复了一些bug -- 版本2.0">
+      <change beforePath="$PROJECT_DIR$/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/CardTable.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/CardTable.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/Player.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/Player.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/PlayerRule.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/PlayerRule.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -52,7 +58,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/img" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -90,7 +96,9 @@
       <workItem from="1629162337104" duration="24923000" />
       <workItem from="1629202302976" duration="8472000" />
       <workItem from="1629248297631" duration="2109000" />
-      <workItem from="1629335796708" duration="1363000" />
+      <workItem from="1629335796708" duration="1594000" />
+      <workItem from="1657947701362" duration="13314000" />
+      <workItem from="1659514488915" duration="4000" />
     </task>
     <task id="LOCAL-00001" summary="初始化小游戏 -- 版本1.0">
       <created>1629171756852</created>
@@ -106,7 +114,14 @@
       <option name="project" value="LOCAL" />
       <updated>1629335910940</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="修复了一些bug -- 版本2.0">
+      <created>1629337199391</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1629337199391</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -154,10 +169,10 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="270" y="62" key="SettingsEditor/0.0.1536.834@0.0.1536.834" timestamp="1629336390132" />
-    <state x="361" y="150" key="Vcs.Push.Dialog.v2" timestamp="1629337145948">
+    <state x="361" y="150" key="Vcs.Push.Dialog.v2" timestamp="1629337203610">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="361" y="150" key="Vcs.Push.Dialog.v2/0.0.1536.834@0.0.1536.834" timestamp="1629337145948" />
+    <state x="361" y="150" key="Vcs.Push.Dialog.v2/0.0.1536.834@0.0.1536.834" timestamp="1629337203610" />
     <state x="431" y="155" width="672" height="678" key="search.everywhere.popup" timestamp="1629189950929">
       <screen x="0" y="0" width="1536" height="834" />
     </state>

@@ -1,11 +1,14 @@
 /**
- * 玩家规则类，每一名玩家需要遵循游戏规则来进行开始游戏
- * @constructor
+ * 玩家规则类，每一名玩家需要遵循游戏规则来进行游戏
+ * @constructor 构造器
  */
 function PlayRule() {
 
   // 牌库
   this.box = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', '大王', '小王']
+
+  // 出牌类型
+  this.type = ''
 
   // 规则方法
   this.rule = function (outCard, player) {
@@ -82,7 +85,7 @@ function PlayRule() {
 
   // 顺子的规则
   this.lineCard = function (outCard) {
-    const lines = outCard.map(card => card.card)
+    let lines = outCard.map(card => card.card)
     // 根据大小进行排序
     lines.sort((card1, card2) => {
       return card1.size - card2.size
@@ -94,23 +97,18 @@ function PlayRule() {
     if (index !== -1) {
       return false
     }
-    // 排除重复可能
-    for (let i = 0; i < lines.length - 1; i++) {
-      if (lines[i].size === lines[i + 1].size) {
-        return false // 不满足
-      }
+    lines = lines.map(card => card.size)
+    // 判断是否包含重复值
+    if (lines.length !== Array.from(new Set(lines)).length) {
+      return false
     }
     // 求出最大值和最小值
-    let maxSize = lines[0].size
-    let minSize = lines[0].size
-
+    let maxSize = lines[0]
+    let minSize = lines[0]
     for (let i = 1; i < lines.length; i++) {
-      if (maxSize < lines[i].size) {
-        maxSize = lines[i].size
-      }
-      if (minSize > lines[i].size) {
-        minSize = lines[i].size
-      }
+      let size = lines[i]
+      maxSize = Math.max(maxSize, size)
+      minSize = Math.min(minSize, size)
     }
 
     // 使用最大值与最小值之差
@@ -122,7 +120,8 @@ function PlayRule() {
    */
 
   // 是否存在以下关系
-  this.canToContact = function (player, index) {
+  this.canToContact = function (player, index, type) {
+    this.type = type
     if(player.box.length < 2) {
       return null
     }
@@ -131,9 +130,6 @@ function PlayRule() {
       return null
     }
     return this.canToLine(player, index)
-      || this.canToBomb(player, index)
-      || this.canToThree(player, index)
-      || this.canToPair(player, index)
   }
 
   // 对子
@@ -158,6 +154,7 @@ function PlayRule() {
 
   // 三条
   this.canToThree = function (player, index) {
+    let oldIndex = index
     let count = 1
     while (index > 0 && (player.box[index - 1].number === player.box[index].number)) { // 前面
       count++
@@ -170,11 +167,12 @@ function PlayRule() {
         index++
       }
     }
-    return count >= 3 ? index - 1 : null
+    return count >= 3 ? index - 1 : this.type === 'two' ? this.canToPair(player, oldIndex) : null
   }
 
   // 炸弹
   this.canToBomb = function (player, index) {
+    let oldIndex = index
     // 至少四张，大小王除外
     if (index >= 1 && index < player.box.length - 1) {
       if (player.box[index].number === '小王' && player.box[index - 1].number === '大王'
@@ -194,11 +192,12 @@ function PlayRule() {
         index++
       }
     }
-    return count >= 4 ? index - 1 : null
+    return count >= 4 ? index - 1 : this.type === 'three' ? this.canToThree(player, oldIndex) : null
   }
 
   // 顺子
   this.canToLine = function (player, index) {
+    let oldIndex = index
     if (player.box.length < 5 || index < 1) {
       return null
     }
@@ -270,7 +269,7 @@ function PlayRule() {
         ans = '0'
       }
     }
-    return ans
+    return ans ? ans : this.canToBomb(player, oldIndex)
   }
 
 }
